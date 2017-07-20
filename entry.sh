@@ -8,7 +8,7 @@ if test -e "${POSTGRES_DIR}/initial_load"; then
   sudo service postgresql restart
 else
   sudo pg_createcluster ${PG_MAJOR} main --start
-  psql -U postgres -c "ALTER USER postgres WITH PASSWORD ${POSTGRES_PASSW};"
+  psql -U postgres -c "ALTER USER postgres WITH PASSWORD '${POSTGRES_PASSW}';"
   echo "host\tall\tall\t0.0.0.0/0\tmd5" >> /etc/postgresql/${PG_MAJOR}/main/pg_hba.conf
   echo "listen_addresses='*'" >> /etc/postgresql/${PG_MAJOR}/main/postgresql.conf
   sudo service postgresql restart
