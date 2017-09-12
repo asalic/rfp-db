@@ -2,13 +2,12 @@ FROM postgres:9.5
 
 MAINTAINER Andy S Alic (asalic@upv.es) Universitat Politecnica de Valencia
 
-
 RUN apt-get update && apt-get -y install vim bash apt-utils sudo git lftp python3 tar zip unzip
 
 ENV PG_MAJOR 9.5
 ENV POSTGRES_DIR /home/postgres
 # You can set the following variables as you wish
-ENV GTFS_DATA_FTP_FPATH ftp://ftpgrycap.i3m.upv.es/public/eubrabigsea/compressed-data/
+ENV GTFS_DATA_FTP_FPATH ftp://ftpgrycap.i3m.upv.es/public/eubrabigsea/data/gtfs
 ENV CMD_KEEP_ALIVE tail -f /dev/null
 ENV POSTGRES_PASSW default
 
@@ -17,6 +16,8 @@ ENV POSTGRES_PASSW default
 RUN usermod -m -d ${POSTGRES_DIR} postgres
 RUN mkdir -p /home/postgres
 COPY ./entry.sh ${POSTGRES_DIR}/
+# Add the gtfs importer
+ADD gtfs_SQL_importer ${POSTGRES_DIR}/gtfs_SQL_importer
 RUN chmod +x ${POSTGRES_DIR}/entry.sh
 RUN chown -R postgres:postgres ${POSTGRES_DIR}
 
@@ -43,7 +44,6 @@ USER postgres
 WORKDIR ${POSTGRES_DIR}
 
 # Get the git repo with the maintainer's version of gtfs importer
-RUN git clone https://github.com/eubr-bigsea/gtfs_SQL_importer
 RUN chmod +x gtfs_SQL_importer/src/import-gtfs-data.sh
 
 EXPOSE 5432
